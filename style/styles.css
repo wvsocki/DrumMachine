@@ -1,2 +1,14 @@
 .keyboardRow { text-align:center }
 .key { display:inline-block; border:1px solid red; padding:10px;margin-bottom:5px; }
+.sequencerRow{
+    border: 1px solid blue;
+    min-height: 40px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+.sequencerCell{
+    border: 3px solid chartreuse;
+
+    flex: auto;
+}
