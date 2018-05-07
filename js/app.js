@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var intervalOn = false
     let intervalId = ''
     var loopState = 0;
+    let resultTempo = 125
     document.addEventListener('keydown', function (e) {
 
         if (e.keyCode == 32) {
@@ -17,10 +18,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 intervalOn = true
                 generator(instruments);
 
-            };
+            }
+            ;
         } else {
             play(e.keyCode)
-        };
+        }
+        ;
     });
 
 
@@ -36,17 +39,17 @@ document.addEventListener("DOMContentLoaded", function () {
         {
             name: "kick",
             smpl: 81,
-            loop: ["x", ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x', ' ', ' ', ' ', ' ', ' ']
+            loop: [" ", ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
         },
         {
             name: "snare",
             smpl: 69,
-            loop: [" ", ' ', ' ', ' ', "x", ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x', ' ', ' ', ' ']
+            loop: [" ", ' ', ' ', ' ', " ", ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
         },
         {
             name: "closedHat",
             smpl: 89,
-            loop: ["x", ' ', 'x', ' ', "x", ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ', 'x', ' ']
+            loop: [" ", ' ', ' ', ' ', " ", ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
         },
         {
             name: "openHat",
@@ -57,10 +60,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function generator(arrOfObj) {
         loopState = 0;
+
         function genInterv() {
             if (loopState == 16) {
                 loopState = 0
-            };
+            }
+            ;
             for (let indx = 0; indx < arrOfObj.length; indx++) {
                 if (arrOfObj[indx].loop[loopState] !== ' ') {
                     play(arrOfObj[indx].smpl)
@@ -71,8 +76,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         genInterv()
         intervalId = setInterval(() => {
+            activeLigten()
             genInterv()
-        }, 88);
+        }, resultTempo )
     };
 
 
@@ -81,29 +87,55 @@ document.addEventListener("DOMContentLoaded", function () {
             const sequencerRow = document.createElement("div");
             sequencerRow.classList.add("sequencerRow", i);
             document.querySelector("#sequencerMain").appendChild(sequencerRow);
-            for (let j = 0; j<arrOfObj[i].loop.length; j++){
+            for (let j = 0; j < arrOfObj[i].loop.length; j++) {
                 const sequencerCell = document.createElement("div");
                 sequencerCell.classList.add("sequencerCell");
                 sequencerCell.setAttribute("data-i", i.toString())
                 sequencerCell.setAttribute("data-j", j.toString())
                 const sequencerRowIndex = document.querySelectorAll(".sequencerRow")[i]
                 sequencerRowIndex.appendChild(sequencerCell)
-            };
+            }
+            ;
 
         }
 
 
     };
     createTable(instruments)
-    
-    // const sequencerCellList = document.querySelectorAll(".sequencerCell")
-    // sequencerCellList.addEventListener("click", function () {
-    //     console.log("xd");
-    // })
-    document.addEventListener('click', function(e){
-        if(e.target.class=="sequencerCell"){
-            console.log("xd");
+
+    document.addEventListener('click', function (e) {
+        // let clickedCell = instruments[e.target.getAttribute("data-i")].loop[e.target.getAttribute("data-j")];
+        if (e.target.classList.contains("sequencerCell")) {
+            if (instruments[e.target.getAttribute("data-i")].loop[e.target.getAttribute("data-j")] == " ") {
+                instruments[e.target.getAttribute("data-i")].loop[e.target.getAttribute("data-j")] = "x";
+                e.target.classList.add("cellClicked")
+            } else {
+                instruments[e.target.getAttribute("data-i")].loop[e.target.getAttribute("data-j")] = " ";
+                e.target.classList.remove("cellClicked")
+            }
         }
     })
+    function activeLigten() {
+    document.querySelectorAll(".sequencerCell").forEach(function (e, i) {
+        if(e.getAttribute("data-j") == loopState){
+            e.classList.add("loopLighted")
+        } else {
+            e.classList.remove("loopLighted")
+        }
+
+    })
+
+    }
+
+
+    document.querySelector("#number").addEventListener("input", function () {
+        console.log(this.value);
+        resultTempo = 15000 / this.value
+        clearInterval(intervalId)
+        intervalOn = false
+
+    })
+
+
 
 });
